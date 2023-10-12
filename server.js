@@ -21,9 +21,13 @@ function shareRoomsInfo() {
 }
 
 io.on("connection", (socket) => {
+  console.log("connection");
+
   shareRoomsInfo();
 
   socket.on(ACTIONS.JOIN, (config) => {
+    console.log("JOIN");
+
     const { room: roomID } = config;
     const { rooms: joinedRooms } = socket;
 
@@ -50,6 +54,8 @@ io.on("connection", (socket) => {
   });
 
   function leaveRoom() {
+    console.log("leaveRoom");
+
     const { rooms } = socket;
 
     Array.from(rooms).forEach((roomID) => {
@@ -71,10 +77,14 @@ io.on("connection", (socket) => {
   socket.on("disconnecting", leaveRoom);
 
   socket.on(ACTIONS.RELAY_SDP, ({ peerID, sessionDescription }) => {
+    console.log("RELAY_SDP");
+
     io.to(peerID).emit(ACTIONS.SESSION_DESCRIPTION, { peerID: socket.id, sessionDescription });
   });
 
   socket.on(ACTIONS.RELAY_ICE, ({ peerID, iceCandidate }) => {
+    console.log("RELAY_ICE");
+
     io.to(peerID).emit(ACTIONS.ICE_CANDIDATE, { peerID: socket.id, iceCandidate });
   });
 });
